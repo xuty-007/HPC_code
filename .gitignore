@@ -1,0 +1,4 @@
+stubl-master/conf/stubl
+stubl-master/log/NodeInfo.log
+stubl-master/src/slurmbf/*.o
+myHadoop/scratch/
