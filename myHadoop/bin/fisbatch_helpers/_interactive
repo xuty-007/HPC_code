@@ -1,0 +1,26 @@
+#!/bin/sh
+# -*- coding: utf-8 -*-
+# Author: Pär Andersson  (National Supercomputer Centre, Sweden)
+# Version: 0.2 2007-07-30
+# Revised. Tingyang Xu
+# Version: 0.4 2015-12-29
+#
+# Simple batch script that starts SCREEN.
+# Revise by Tingyang for Hadoop. 09-09-2015
+export HADOOP_CONF_DIR=$MYHADOOP_HOME/scratch/${USER}_hadoop_conf.$SLURM_JOBID
+export SPARK_CONF_DIR=$HADOOP_CONF_DIR
+export HIVE_CONF_DIR=$HADOOP_CONF_DIR/hive
+if [ "z$HADOOP_OLD_DIR" == "z" ]; then
+  $MYHADOOP_HOME/bin/myhadoop-configure.sh
+else
+  $MYHADOOP_HOME/bin/myhadoop-configure.sh -p $HADOOP_OLD_DIR
+fi
+$HADOOP_HOME/sbin/start-all.sh
+$HADOOP_HOME/bin/hdfs dfs -mkdir -p /tmp
+$HADOOP_HOME/bin/hdfs dfs -chmod g+w /tmp
+$HADOOP_HOME/bin/hdfs dfs -mkdir -p /user/hive/warehouse
+$HADOOP_HOME/bin/hdfs dfs -chmod g+w /user/hive/warehouse
+$SPARK_HOME/sbin/start-all.sh
+echo `env`> $HADOOP_CONF_DIR/Done
+srun -n1 -N1 --epilog="$MYHADOOP_HOME/bin/fisbatch_helpers/_epilog" screen -Dm -S slurm$SLURM_JOB_ID
+

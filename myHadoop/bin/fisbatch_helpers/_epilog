@@ -1,0 +1,10 @@
+#!/bin/bash
+
+set -a
+. $HADOOP_CONF_DIR/Done 2>&1 
+sed -i "/^localhost/d" $HOME/.ssh/known_hosts 2>/dev/null
+$SPARK_HOME/sbin/stop-all.sh 2>&1 
+$HADOOP_HOME/sbin/stop-all.sh 2>&1 
+$MYHADOOP_HOME/bin/myhadoop-cleanup.sh 2>&1 
+rm -rf $HADOOP_CONF_DIR
+#rm -r $HADOOP_LOG
